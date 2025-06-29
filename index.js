@@ -7,10 +7,10 @@ const path = "./data.json";
 
 const markCommit = (x, y) => {
   const date = moment()
-    .subtract(1, "y")
-    .add(1, "d")
-    .add(x, "w")
-    .add(y, "d")
+    .subtract(30, "d") // Start from 30 days ago
+    .add(x, "w") // x represents weeks
+    .add(y, "d") // y represents days in the week
+    .add(random.int(0, 23), "h") // Add random hour
     .format();
 
   const data = {
@@ -23,17 +23,22 @@ const markCommit = (x, y) => {
 };
 
 const makeCommits = (n) => {
-  if(n===0) return simpleGit().push();
-  const x = random.int(0, 54);
-  const y = random.int(0, 6);
-  const date = moment().subtract(1, "y").add(1, "d").add(x, "w").add(y, "d").format();
+  if (n === 0) return simpleGit().push();
+  const x = random.int(0, 4); // Select random week within 4 weeks (0-4)
+  const y = random.int(0, 6); // Select random day of the week (0-6)
+  const date = moment()
+    .subtract(30, "d") // Start from 30 days ago
+    .add(x, "w") // x represents weeks
+    .add(y, "d") // y represents days in the week
+    .add(random.int(0, 23), "h") // Add random hour
+    .format();
 
   const data = {
     date: date,
   };
   console.log(date);
   jsonfile.writeFile(path, data, () => {
-    simpleGit().add([path]).commit(date, { "--date": date },makeCommits.bind(this,--n));
+    simpleGit().add([path]).commit(date, { "--date": date }, makeCommits.bind(this, --n));
   });
 };
 
