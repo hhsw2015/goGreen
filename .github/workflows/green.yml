@@ -3,9 +3,13 @@ name: Generate Commits
 on:
   workflow_dispatch: # Manual trigger
 
+permissions:
+  contents: write # Ensure write access for git push
+
 jobs:
   generate-commits:
     runs-on: ubuntu-latest
+    timeout-minutes: 15 # Increase timeout for 100 commits
 
     steps:
       # Checkout the repository
@@ -30,9 +34,10 @@ jobs:
 
       # Install dependencies
       - name: Install dependencies
-        run: npm install moment simple-git random
+        run: npm install moment simple-git@latest random
 
-      # Run the script
+
+      # Run the script with redirected output
       - name: Run index.js
         run: node index.js
 
@@ -41,6 +46,5 @@ jobs:
         run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-          git add .
-          git commit -m "Ensure all commits are pushed" || echo "No changes to commit"
-          git push origin main
+          git push origin main || echo "Push failed, checking git status"
+          git status
