@@ -36,15 +36,27 @@ jobs:
       - name: Install dependencies
         run: npm install moment simple-git@latest random
 
+      # Configure Git for simple-git
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+
+      # Debug Git status before running script
+      - name: Debug Git status
+        run: |
+          git remote -v
+          git status
+          git log --oneline -n 5
+          git config --global --list
 
       # Run the script with redirected output
       - name: Run index.js
         run: node index.js
 
+
       # Ensure all changes are pushed
       - name: Push any remaining changes
         run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
           git push origin main || echo "Push failed, checking git status"
           git status
