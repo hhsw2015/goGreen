@@ -36,6 +36,18 @@ jobs:
       - name: Install dependencies
         run: npm install moment simple-git@latest random
 
+      # Clone facebook/react and extract commit messages
+      - name: Extract commit messages from facebook/react
+        run: |
+          git clone https://github.com/facebook/react.git
+          cd react
+          git log --pretty="%s" -n 100 > ../commit_messages.txt
+          cd ..
+          # Clean messages: remove empty lines and messages longer than 50 characters
+          sed -i '/^$/d' commit_messages.txt
+          awk 'length($0) <= 50' commit_messages.txt > temp.txt && mv temp.txt commit_messages.txt
+          rm -rf react
+
       # Configure Git for simple-git
       - name: Configure Git
         run: |
@@ -57,3 +69,4 @@ jobs:
         run: |
           git push origin main || echo "Push failed, checking git status"
           git status
+          cat commit_messages.txt
