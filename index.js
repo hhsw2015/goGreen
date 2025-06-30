@@ -5,6 +5,12 @@ import random from "random";
 
 const path = "./data.json";
 
+// Read commit messages from commit_messages.txt
+const commitMessages = fs
+  .readFileSync("commit_messages.txt", "utf8")
+  .split("\n")
+  .filter((msg) => msg.trim() !== "");
+
 const markCommit = (x, y) => {
   const now = moment();
   const dateObj = moment()
@@ -40,7 +46,9 @@ const makeCommits = (n) => {
   };
   console.log(date);
   jsonfile.writeFile(path, data, () => {
-    simpleGit().add([path]).commit(date, { "--date": date }, makeCommits.bind(this, --n));
+    // Randomly select a commit message
+    const message = commitMessages[random.int(0, commitMessages.length - 1)];
+    simpleGit().add([path]).commit(message, { "--date": date }, makeCommits.bind(this, --n));
   });
 };
 
