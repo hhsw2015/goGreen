@@ -1,0 +1,37 @@
+name: Generate Commits
+
+on:
+  workflow_dispatch: # Manual trigger
+
+jobs:
+  generate-commits:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch full history for Git operations
+
+      # Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Use latest stable Node.js version
+          cache: 'npm' # Cache npm dependencies
+
+      # Initialize Node.js project if package.json doesn't exist
+      - name: Initialize Node.js project
+        run: |
+          if [ ! -f package.json ]; then
+            npm init -y
+          fi
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install moment simple-git random
+
+      # Run the script
+      - name: Run index.js
+        run: node index.js
