@@ -40,7 +40,7 @@ jobs:
       - name: Extract commit messages
         run: |
           git clone https://github.com/stylus/stylus.git
-          cd react
+          cd stylus
           git log --pretty="%s" -n 100 > ../commit_messages.txt
           cd ..
           # Clean messages: remove empty lines and messages longer than 50 characters
